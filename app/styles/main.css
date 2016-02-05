@@ -1,0 +1,60 @@
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_reset\.scss}line{font-family:\000031}}
+html,
+body,
+ul,
+ol {
+  margin: 0;
+  padding: 0; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_reset\.scss}line{font-family:\000039}}
+li {
+  list-style: none; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_reset\.scss}line{font-family:\0000313}}
+p {
+  margin: 0; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_reset\.scss}line{font-family:\0000317}}
+input[type="text"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 18px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 0; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_reset\.scss}line{font-family:\0000327}}
+input[type="text"]:focus {
+  outline: none; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_base\.scss}line{font-family:\000033}}
+html {
+  height: 100%;
+  width: 100%;
+  font-family: "Verdana", sans-serif;
+  font-size: 14pt; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_base\.scss}line{font-family:\0000310}}
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_base\.scss}line{font-family:\0000318}}
+a {
+  text-decoration: none;
+  color: inherit; }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/_base\.scss}line{font-family:\0000321}}
+  a:hover {
+    font-weight: bold; }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/opt\/projects\/furnace-monitor\/app\/sass\/main\.scss}line{font-family:\000034}}
+.burger {
+  height: 7.0vw;
+  width: 7.0vw;
+  cursor: pointer;
+  margin: 20px; }
+
+/*# sourceMappingURL=main.css.map */
