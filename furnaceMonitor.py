@@ -6,10 +6,18 @@ import math
 import time
 import numpy
 import struct
+import requests
+import datetime
+import pytz
 
 
 furnaceMotorPeak = 56.0
 peakDelta = 2.0
+
+tz = pytz.timezone("America/Denver")
+
+# the URL to post updates to
+updateUrl = 'http://cjparker.us/furnace/api/updateStatus'
 
 # take this many samples each second
 samplesPerSecond = 250
@@ -57,7 +65,6 @@ mpu6050.resetFifo()
 # enable, and capture all the readings
 mpu6050.enableFifoAccelOnly(True)
 
-
 totalSampleCounter = 0
 sampleAccumulator = []
 
@@ -90,7 +97,7 @@ while totalSampleCounter < totalSamplesToCollect:
     samplesToAccum = (bufferReadThreshold * fifoSizeBytes) / float(bytesPerSample)
     secondsToAccum = samplesToAccum / float(samplesPerSecond)
     # print("sleeping {0}".format(secondsToAccum))
-    #time.sleep(secondsToAccum)
+    # time.sleep(secondsToAccum)
 
 print("collected {0} samples".format(totalSampleCounter))
 print("sample array length {0}".format(len(sampleAccumulator)))
@@ -105,6 +112,11 @@ for sampleCount in range(0, totalSampleCounter + 1):
 
     # get one sample of 6 bytes, 2 for each of X,Y,Z
     sample = sampleAccumulator[start:end]
+
+    if (len(sample) <= 0):
+        print("skipping empty sample")
+        continue
+
 
     # do some bit twiddling to isolate 2 bytes for each sample
     rawX = struct.unpack(">h", buffer(bytearray(sample[0:2])))[0]
@@ -144,11 +156,28 @@ trimmedPairs = [pair for pair in freqStrengthPairs if pair['strength'] >= noiseT
 print("we have {0} peaks above the noise level".format(len(trimmedPairs)))
 
 # look for our peak
-detectPeak = [pair for pair in trimmedPairs if (pair['freq'] >= furnaceMotorPeak - peakDelta) and (pair['freq'] <= furnaceMotorPeak + peakDelta)]
+detectPeak = [pair for pair in trimmedPairs if
+              (pair['freq'] >= furnaceMotorPeak - peakDelta) and (pair['freq'] <= furnaceMotorPeak + peakDelta)]
 if (len(detectPeak) > 0):
     print("PEAK DETECTED!")
+    sortedPairs = sorted(trimmedPairs, key=lambda k: -k['strength'])
+    for pair in sortedPairs:
+        print(pair)
+
+    post = {
+        'dateTime': datetime.datetime.now(tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
+        'running': True
+    }
+    resp = requests.post(updateUrl, json=post)
+    print('post response is {0}', resp)
+
 else:
     print("no peak")
+    post = {
+        'dateTime': datetime.datetime.now(tz).strftime('%Y-%m-%dT%H:%M:%S%z'),
+        'running': False
+    }
+    resp = requests.post(updateUrl, json=post)
 
 
 

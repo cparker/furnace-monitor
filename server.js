@@ -20,6 +20,7 @@ module.exports = (() => {
     const furnaceStatusURL = '/furnace/api/furnaceStatus'
     const furnaceHistoryURL = '/furnace/api/furnaceHistory'
     const furnaceUpdateStatusURL = '/furnace/api/updateStatus'
+    const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
     let password, db, statusCollection, historyCollection, port
