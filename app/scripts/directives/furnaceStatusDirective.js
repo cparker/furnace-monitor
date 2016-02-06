@@ -5,7 +5,9 @@ angular.module('furnaceMonitorApp')
     .directive('furnaceStatus', function () {
         return {
             restrict: 'E',
-            scope: {},
+            scope: {
+                furnaceStatus : '=furnaceStatus'
+            },
             templateUrl: 'furnace-status.html'
         }
 

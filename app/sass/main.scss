@@ -1,9 +1,37 @@
 @import 'base';
+@import 'colors';
 
 
-.burger {
-  height: 7.0vw;
-  width: 7.0vw;
-  cursor: pointer;
-  margin:20px;
+.furnace-status-container {
+  //border: 1px solid red;
+  width: 80%;
+  margin-bottom:10px;
+
+  .status-block {
+    padding: 20px;
+    text-align: center;
+    font-size: large;
+    color: white;
+  }
+
+  .status-sub {
+    font-size: 0.8em;
+    font-style: italic;
+  }
+
+  .furnace-running {
+    background-color: $furnaceRunning;
+  }
+
+  .furnace-off {
+    background-color: $furnaceOff;
+  }
 }
+
+.furnace-chart-container {
+  background-color: $mainBackground;
+  text-align: left;
+  width: 80%;
+}
+
+

@@ -1,4 +1,5 @@
 @import 'reset';
+@import 'colors';
 
 html {
   height: 100%;
@@ -11,7 +12,8 @@ body {
   // sets the font to 100% of the parent element's size
   height:100%;
   margin:0;
-  padding:0;
+  padding:10px;
+  background-color: $mainBackground;
 }
 
 // plain links that bold when hovered
