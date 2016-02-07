@@ -51,7 +51,9 @@ angular.module('furnaceMonitorApp')
 
         dataService.getTotalRuntime()
             .success(function (runtime) {
-                $scope.totalRunTimeMins = runtime.totalRunTimeMins;
+                var dur = moment.duration(runtime.totalRunTimeMins,'minutes');
+                $scope.totalRunTimeHours = dur.get('h');
+                $scope.totalRunTimeMins = dur.get('m');
             })
 
 
