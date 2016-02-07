@@ -37,6 +37,10 @@ var mockFurnaceStatus = {
     'running': true
 };
 
+var mockRuntime = {
+    totalRunTimeMins: 15
+};
+
 
 var mockFurnaceHistory = _.chain(_.range(24*4))
     .map(function (n) {
@@ -60,6 +64,9 @@ app.run(function ($httpBackend) {
 
         $httpBackend.whenGET('/furnace/api/furnaceHistory')
             .respond(200, mockFurnaceHistory);
+
+        $httpBackend.whenGET('/furnace/api/totalRuntime')
+            .respond(200, mockRuntime)
     }
 
     else {

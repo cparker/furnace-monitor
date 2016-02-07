@@ -49,6 +49,12 @@ angular.module('furnaceMonitorApp')
             });
 
 
+        dataService.getTotalRuntime()
+            .success(function (runtime) {
+                $scope.totalRunTimeMins = runtime.totalRunTimeMins;
+            })
+
+
         $scope.furnaceOne = {
             dateTime: new Date(),
             running: true
@@ -89,10 +95,10 @@ angular.module('furnaceMonitorApp')
             vAxis: {
                 ticks: [{v: 0, f: 'OFF'}, {v: 1, f: 'ON'}]
             },
-            colors : ['green'],
-            hAxis : {
+            colors: ['green'],
+            hAxis: {
                 format: 'hh:mm a',
-                slantedText:true,
+                slantedText: true,
                 gridlines: {count: 15}
             }
         };

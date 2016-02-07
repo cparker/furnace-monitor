@@ -8,6 +8,7 @@ const serverPackage = require('../server')
 const moment = require('moment')
 
 let server, db
+const port = 4000
 
 let catchError = (doneFunc) => {
     return (err) => {
@@ -42,7 +43,7 @@ describe('the furnace monitor', () => {
                 dateTime: moment().format(),
                 running: true
             },
-            uri: 'http://localhost:3000/furnace/api/updateStatus',
+            uri: 'http://localhost:$port/furnace/api/updateStatus'.replace('$port', port),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -61,6 +62,7 @@ describe('the furnace monitor', () => {
             })
             .then((cnt) => {
                 assert.equal(cnt, 1)
+                post.body.running = false
 
                 return restClient(post)
             })
@@ -84,13 +86,13 @@ describe('the furnace monitor', () => {
     it('should allow retrieving current status', (done) => {
         let req = {
             method: 'GET',
-            uri: 'http://localhost:3000/furnace/api/furnaceStatus',
+            uri: 'http://localhost:$port/furnace/api/furnaceStatus'.replace('$port', port),
             json: true
         }
 
         restClient(req)
             .then((response) => {
-                assert.equal(response.running, true, 'running response should be false')
+                assert.equal(response.running, false, 'incorrect running status')
             })
             .then(() => {
                 done()
@@ -102,14 +104,32 @@ describe('the furnace monitor', () => {
 
         let req = {
             method: 'GET',
-            uri: 'http://localhost:3000/furnace/api/furnaceHistory',
+            uri: 'http://localhost:$port/furnace/api/furnaceHistory'.replace('$port', port),
             json: true
         }
 
         restClient(req)
             .then((response) => {
-                console.log('response',response)
+                console.log('response', response)
                 assert.equal(response.length, 2, 'history len should be 2')
+            })
+            .then(() => {
+                done()
+            })
+    })
+
+    it('should allow retrieving furnace total runtime', (done) => {
+
+        let req = {
+            method: 'GET',
+            uri: 'http://localhost:$port/furnace/api/totalRuntime'.replace('$port', port),
+            json: true
+        }
+
+        restClient(req)
+            .then((response) => {
+                console.log('response', response)
+                assert.equal(response.totalRunTimeMins,5,'total run time is wrong')
             })
             .then(() => {
                 done()

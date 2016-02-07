@@ -17,6 +17,13 @@ angular.module('furnaceMonitorApp')
                     method: 'GET',
                     url: '/furnace/api/furnaceHistory'
                 });
+            },
+
+            getTotalRuntime: function () {
+                return $http({
+                    method: 'GET',
+                    url: '/furnace/api/totalRuntime'
+                })
             }
 
 

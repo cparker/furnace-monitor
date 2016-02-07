@@ -17,9 +17,11 @@ module.exports = (() => {
 
     const statusCollectionName = 'furnaceStatus'
     const historyCollectionName = 'furnaceHistory'
+
     const furnaceStatusURL = '/furnace/api/furnaceStatus'
     const furnaceHistoryURL = '/furnace/api/furnaceHistory'
     const furnaceUpdateStatusURL = '/furnace/api/updateStatus'
+    const furnaceTotalRuntimeURL = '/furnace/api/totalRuntime'
     const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
@@ -34,8 +36,8 @@ module.exports = (() => {
             // todo remove!!
             furnaceUpdateStatusURL,
             furnaceStatusURL,
-            furnaceHistoryURL
-
+            furnaceHistoryURL,
+            furnaceTotalRuntimeURL
         ]
 
         const allowedPatterns = [
@@ -66,6 +68,26 @@ module.exports = (() => {
         }
     }
 
+    let handleFurnaceRuntime = (req, res, next) => {
+        let previousHours = req.query.previousHours || 24
+        let q = {
+            dateTime: {"$gte": new moment().subtract(previousHours, 'hours').toDate()}
+        }
+        historyCollection.find(q)
+            .then((qr) => {
+                let total = _.foldl(qr, (accum, record) => {
+                    // this is kid of cheating.  I happen to know that we're checking exactly every 5 minutes
+                    // so when the record is running, that means it was running for approx 5 minutes
+                    return record.running ? accum + 5 : accum
+                }, 0)
+                res.json({'totalRunTimeMins': total})
+            })
+            .catch((err) => {
+                console.log(err)
+                res.sendStatus(500)
+            })
+    }
+
 
     let handleFurnaceStatus = (req, res, next) => {
         statusCollection.findOne({})
@@ -83,7 +105,6 @@ module.exports = (() => {
         let q = {
             dateTime: {"$gte": new moment().subtract(previousHours, 'hours').toDate()}
         }
-        console.log('Q',q)
         historyCollection.find(q)
             .then((qr) => {
                 res.json(qr)
@@ -158,6 +179,7 @@ module.exports = (() => {
 
         app.get(furnaceStatusURL, handleFurnaceStatus)
         app.get(furnaceHistoryURL, handleFurnaceHistory)
+        app.get(furnaceTotalRuntimeURL, handleFurnaceRuntime)
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
 
         console.log('listening on', port)
