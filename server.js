@@ -133,7 +133,7 @@ module.exports = (() => {
             console.log('couldnt read password file so using something really hard')
             password = '8787*&^ghgjhgj'
         }
-        port = argv.port || 3000
+        port = argv.port || defaultPort
 
         dbConnectionString = argv.dbConnectionString || dbConnectionString
         db = pmongo(dbConnectionString)
