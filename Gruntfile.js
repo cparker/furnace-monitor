@@ -332,17 +332,8 @@ module.exports = function (grunt) {
         concurrent: {
             server: [
                 'copy:styles'
-            ],
-            test: [
-                'copy:styles'
-            ],
-            dist: [
-                'copy:styles',
-                'imagemin',
-                'svgmin'
             ]
         },
-
 
 
         sass: {
@@ -386,7 +377,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'clean:server',
-        'concurrent:test',
         'autoprefixer',
         'connect:test'
     ]);
@@ -395,7 +385,9 @@ module.exports = function (grunt) {
         'clean:dist',
         'wiredep',
         'useminPrepare',
-        'concurrent:dist',
+        'copy:styles',
+        'imagemin',
+        'svgmin',
         'autoprefixer',
         'concat',
         'ngAnnotate',
