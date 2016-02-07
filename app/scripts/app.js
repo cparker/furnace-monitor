@@ -30,7 +30,7 @@ var app = angular
             });
     });
 
-var mock = true;
+var mock = false;
 
 var mockFurnaceStatus = {
     'dateTime': new Date(),
@@ -51,14 +51,21 @@ var mockFurnaceHistory = _.chain(_.range(24*4))
 
 app.run(function ($httpBackend) {
 
-    $httpBackend.whenGET('furnace-status.html').passThrough();
 
     if (mock) {
+        $httpBackend.whenGET('furnace-status.html').passThrough();
+
         $httpBackend.whenGET('/furnace/api/furnaceStatus')
             .respond(200, mockFurnaceStatus);
 
         $httpBackend.whenGET('/furnace/api/furnaceHistory')
             .respond(200, mockFurnaceHistory);
+    }
+
+    else {
+        $httpBackend.whenGET(/.*/).passThrough();
+        $httpBackend.whenPOST(/.*/).passThrough();
+        $httpBackend.whenPUT(/.*/).passThrough();
     }
 
 });
