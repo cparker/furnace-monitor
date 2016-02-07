@@ -17,11 +17,11 @@ angular.module('furnaceMonitorApp')
         dataService.getStatus()
             .success(function (status) {
                 $scope.furnaceOne = status;
-                $scope.furnaceOne.statusDateFromNow = moment(status.dateTime).fromNow()
+                $scope.furnaceOne.statusDateFromNow = moment(status.dateTime).fromNow();
             })
             .error(function (er) {
                 console.log(er);
-            })
+            });
 
         dataService.getHistory()
             .success(function (history) {
@@ -32,7 +32,7 @@ angular.module('furnaceMonitorApp')
                  [javascript date, 0 or 1]
                  ]
                  */
-                console.log(history)
+                console.log(history);
                 var chartData = [
                     ['dateTime', 'furnace status']
                 ];
@@ -46,7 +46,7 @@ angular.module('furnaceMonitorApp')
             })
             .error(function (er) {
                 console.log(er);
-            })
+            });
 
 
         $scope.furnaceOne = {
@@ -56,7 +56,7 @@ angular.module('furnaceMonitorApp')
 
         $scope.chartObject = {};
 
-        $scope.chartObject.type = "AreaChart";
+        $scope.chartObject.type = 'AreaChart';
 
         /*
          $scope.chartObject.data = [

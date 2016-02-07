@@ -9,6 +9,6 @@ angular.module('furnaceMonitorApp')
                 furnaceStatus : '=furnaceStatus'
             },
             templateUrl: 'furnace-status.html'
-        }
+        };
 
     });

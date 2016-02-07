@@ -28,25 +28,25 @@ var app = angular
             .otherwise({
                 redirectTo: '/'
             });
-    })
+    });
 
 var mock = true;
 
 var mockFurnaceStatus = {
-    "dateTime": new Date(),
-    "running": true
-}
+    'dateTime': new Date(),
+    'running': true
+};
 
 
 var mockFurnaceHistory = _.chain(_.range(24*4))
     .map(function (n) {
         var now = moment();
         return {
-            "dateTime": now.subtract(24*60 - n*15, 'minutes').toDate(),
-            "running": [true, false][Math.floor(Math.random() * 2)]
-        }
+            'dateTime': now.subtract(24*60 - n*15, 'minutes').toDate(),
+            'running': [true, false][Math.floor(Math.random() * 2)]
+        };
     })
-    .value()
+    .value();
 
 
 app.run(function ($httpBackend) {
@@ -55,10 +55,10 @@ app.run(function ($httpBackend) {
 
     if (mock) {
         $httpBackend.whenGET('/furnace/api/furnaceStatus')
-            .respond(200, mockFurnaceStatus)
+            .respond(200, mockFurnaceStatus);
 
         $httpBackend.whenGET('/furnace/api/furnaceHistory')
-            .respond(200, mockFurnaceHistory)
+            .respond(200, mockFurnaceHistory);
     }
 
-})
+});

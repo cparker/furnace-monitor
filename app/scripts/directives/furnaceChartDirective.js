@@ -7,6 +7,6 @@ angular.module('furnaceMonitorApp')
             restrict: 'E',
             scope: {},
             templateUrl: 'furnace-chart.html'
-        }
+        };
 
     });

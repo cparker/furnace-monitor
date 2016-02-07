@@ -24,7 +24,7 @@ window.app = {
   receivedEvent: function (id) {
     /*jslint browser:true */
     console.log('bootstrapping NG');
-    window.document.getElementById("myText").value = "BOOTSTRAPPING";
+    window.document.getElementById('myText').value = 'BOOTSTRAPPING';
     angular.bootstrap(document, ['furnaceMonitorApp']);
   }
 };

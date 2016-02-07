@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 
 angular.module('furnaceMonitorApp')
@@ -9,16 +9,16 @@ angular.module('furnaceMonitorApp')
                 return $http({
                     method: 'GET',
                     url: '/furnace/api/furnaceStatus'
-                })
+                });
             },
 
             getHistory: function () {
                 return $http({
                     method: 'GET',
                     url: '/furnace/api/furnaceHistory'
-                })
+                });
             }
 
 
-        }
-    }])
+        };
+    }]);
