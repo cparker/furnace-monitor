@@ -4,8 +4,10 @@
 
 .furnace-status-container {
   //border: 1px solid red;
-  width: 80%;
+  width: 98%;
   margin-bottom:10px;
+
+  overflow: hidden;
 
   .status-block {
     padding: 20px;
@@ -31,7 +33,7 @@
 .furnace-chart-container {
   background-color: $mainBackground;
   text-align: left;
-  width: 80%;
+  width: 98%;
 }
 
 
