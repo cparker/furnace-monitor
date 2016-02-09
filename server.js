@@ -198,7 +198,7 @@ module.exports = (() => {
         // handle a post that updates temperature
         console.log('temp post body', req.body)
         let b = req.body
-        b.dateTime = moment(req.body.dateTime).toDate()
+        b.dateTime = moment().toDate()
         indoorTempCollection.insert(b)
             .then((result) => {
                 res.sendStatus(201)

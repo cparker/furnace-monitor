@@ -30,7 +30,7 @@ var app = angular
             });
     });
 
-var mock = true;
+var mock = false;
 
 var mockFurnaceStatus = {
     'dateTime': new Date(),
