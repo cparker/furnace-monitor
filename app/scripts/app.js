@@ -30,7 +30,7 @@ var app = angular
             });
     });
 
-var mock = false;
+var mock = true;
 
 var mockFurnaceStatus = {
     'dateTime': new Date(),
@@ -47,7 +47,8 @@ var mockFurnaceHistory = _.chain(_.range(24*4))
         var now = moment();
         return {
             'dateTime': now.subtract(24*60 - n*15, 'minutes').toDate(),
-            'running': [true, false][Math.floor(Math.random() * 2)]
+            'running': [true, false][Math.floor(Math.random() * 2)],
+            'tempF' : Math.ceil(Math.random() * 15) + 60
         };
     })
     .value();

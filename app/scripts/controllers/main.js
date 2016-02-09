@@ -34,12 +34,12 @@ angular.module('furnaceMonitorApp')
                  */
                 console.log(history);
                 var chartData = [
-                    ['dateTime', 'furnace status']
+                    ['dateTime', 'furnace status', 'indoor temp ºF']
                 ];
                 var chartPairs = _.map(history, function (rec) {
                     var jsDate = moment(rec.dateTime).toDate();
                     var runningValue = rec.running ? 1 : 0;
-                    return [jsDate, runningValue];
+                    return [jsDate, runningValue, rec.tempF];
                 });
 
                 $scope.chartObject.data = chartData.concat(chartPairs);
@@ -51,7 +51,7 @@ angular.module('furnaceMonitorApp')
 
         dataService.getTotalRuntime()
             .success(function (runtime) {
-                var dur = moment.duration(runtime.totalRunTimeMins,'minutes');
+                var dur = moment.duration(runtime.totalRunTimeMins, 'minutes');
                 $scope.totalRunTimeHours = dur.get('h');
                 $scope.totalRunTimeMins = dur.get('m');
             })
@@ -64,7 +64,7 @@ angular.module('furnaceMonitorApp')
 
         $scope.chartObject = {};
 
-        $scope.chartObject.type = 'AreaChart';
+        $scope.chartObject.type = 'ComboChart';
 
         /*
          $scope.chartObject.data = [
@@ -90,14 +90,41 @@ angular.module('furnaceMonitorApp')
             },
 
             chartArea: {
-                left: 40,
+                left: 100,
                 top: 10,
-                width: '100%'
+                width: '80%'
             },
-            vAxis: {
-                ticks: [{v: 0, f: 'OFF'}, {v: 1, f: 'ON'}]
-            },
-            colors: ['green'],
+
+            series : [
+                {
+                    type : 'area',
+                    targetAxisIndex : 0,
+                    color : 'green'
+                },
+                {
+                    type : 'line',
+                    targetAxisIndex : 1,
+                    color : 'blue',
+                    curveType : 'function'
+                }
+            ],
+
+            vAxes: [
+                // 0
+                {
+                    ticks: [{v: 0, f: 'OFF'}, {v: 1, f: 'ON'}],
+                    minValue : 0,
+                    maxValue : 1,
+                    title: 'Furnace On/Off'
+                },
+
+                //1
+                {
+                    ticks: [60,65,70,75],
+                    title: 'Indoor Temp ºF'
+                }
+
+            ],
             hAxis: {
                 format: 'hh:mm a',
                 slantedText: true,
@@ -106,3 +133,6 @@ angular.module('furnaceMonitorApp')
         };
 
     }]);
+
+
+
