@@ -9,6 +9,7 @@ const moment = require('moment')
 const Q = require('Q')
 const mockData = require('./mockData')
 const _ = require('underscore')
+const sampleOutdoorTemp = require('../sampleOutdoorTemp')
 
 let server, db
 const port = 4000
@@ -176,6 +177,25 @@ describe('the furnace monitor', () => {
         restClient(req)
             .then((response) => {
                 assert.equal(response.statusCode, 201, 'response code is wrongo!')
+            })
+            .then(() => {
+                done()
+            })
+            .catch(catchError(done))
+    })
+
+    it('should allow sampling of outdoor temp', (done) => {
+        db.collection('outdoorTemp').drop()
+            .then(() => {
+                return sampleOutdoorTemp.sample()
+            })
+            .then(() => {
+                return db.collection('outdoorTemp').find()
+            })
+            .then((findResult) => {
+                assert.equal(findResult.length, 1, 'find result length is wrong')
+                assert.isDefined(findResult[0].tempF, 'tempF is missing')
+                assert.isDefined(findResult[0].dateTime, 'dateTime is missing')
             })
             .then(() => {
                 done()

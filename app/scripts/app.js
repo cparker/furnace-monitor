@@ -42,13 +42,14 @@ var mockRuntime = {
 };
 
 
-var mockFurnaceHistory = _.chain(_.range(24*4))
+var mockFurnaceHistory = _.chain(_.range(24 * 4))
     .map(function (n) {
         var now = moment();
         return {
-            'dateTime': now.subtract(24*60 - n*15, 'minutes').toDate(),
+            'dateTime': now.subtract(24 * 60 - n * 15, 'minutes').toDate(),
             'running': [true, false][Math.floor(Math.random() * 2)],
-            'tempF' : Math.ceil(Math.random() * 15) + 60
+            'indoorTempF': Math.ceil(Math.random() * 15) + 60,
+            'outdoorTempF': Math.ceil(Math.random() * 15) + 60
         };
     })
     .value();

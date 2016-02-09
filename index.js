@@ -6,6 +6,13 @@ module.exports = (() => {
 
     const argv = require('minimist')(process.argv.slice(2))
     let server = require('./server')
-    server.init(argv)
+    let sampleOutdoorTemp = require('./sampleOutdoorTemp')
+
+    if (argv.sampleOutdoorTemp) {
+        sampleOutdoorTemp.sample()
+    } else {
+        server.init(argv)
+    }
+
 
 })()

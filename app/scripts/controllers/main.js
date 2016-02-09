@@ -34,12 +34,17 @@ angular.module('furnaceMonitorApp')
                  */
                 console.log(history);
                 var chartData = [
-                    ['dateTime', 'furnace status', 'indoor temp ºF']
+                    ['dateTime', 'furnace status', 'indoor temp ºF', 'outdoor temp ºF']
                 ];
                 var chartPairs = _.map(history, function (rec) {
                     var jsDate = moment(rec.dateTime).toDate();
                     var runningValue = rec.running ? 1 : 0;
-                    return [jsDate, runningValue, rec.indoorTempF || 65.0]; // placeholder to not screw up the graph if we're missing data
+                    return [
+                        jsDate,
+                        runningValue,
+                        rec.indoorTempF || 65.0,
+                        rec.outdoorTempF || 60.0
+                    ]; // placeholder to not screw up the graph if we're missing data
                 });
 
                 $scope.chartObject.data = chartData.concat(chartPairs);
@@ -86,13 +91,13 @@ angular.module('furnaceMonitorApp')
             title: 'Furnace on/off over time',
             backgroundColor: '#c8c8c8',
             legend: {
-                position: 'none'
+                position: 'bottom'
             },
 
             chartArea: {
-                left: 100,
+               // left: 100,
                 top: 10,
-                width: '80%'
+                width: '75%'
             },
 
             series : [
@@ -105,6 +110,12 @@ angular.module('furnaceMonitorApp')
                     type : 'line',
                     targetAxisIndex : 1,
                     color : 'blue',
+                    curveType : 'function'
+                },
+                {
+                    type : 'line',
+                    targetAxisIndex : 2,
+                    color : 'brown',
                     curveType : 'function'
                 }
             ],
@@ -121,10 +132,15 @@ angular.module('furnaceMonitorApp')
                 //1
                 {
                     ticks: [60,65,70,75],
-                    title: 'Indoor Temp ºF',
+                    title: 'Temp ºF',
                     gridlines : {
                         color: 'white'
                     }
+                },
+
+                //1
+                {
+                    ticks: []
                 }
 
             ],
