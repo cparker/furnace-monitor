@@ -6,6 +6,9 @@ const argv = require('minimist')(process.argv.slice(2));
 const restClient = require('request-promise')
 const serverPackage = require('../server')
 const moment = require('moment')
+const Q = require('Q')
+const mockData = require('./mockData')
+const _ = require('underscore')
 
 let server, db
 const port = 4000
@@ -24,7 +27,12 @@ before((done) => {
     server = serverPackage.init(argv)
 
     db = pmongo('mongodb://localhost/furnace')
-    db.collection('furnaceStatus').drop()
+
+    Q.all([
+        db.collection('furnaceStatus').drop(),
+        db.collection('furnaceHistory').drop(),
+        db.collection('indoorTemp').drop()
+    ])
         .then(() => {
             return db.collection('furnaceHistory').drop()
         })
@@ -97,6 +105,7 @@ describe('the furnace monitor', () => {
             .then(() => {
                 done()
             })
+            .catch(catchError(done))
     })
 
 
@@ -108,14 +117,33 @@ describe('the furnace monitor', () => {
             json: true
         }
 
-        restClient(req)
+        // clear DBs to start
+        Q.all([
+            db.collection('furnaceHistory').drop(),
+            db.collection('indoorTemp').drop()
+        ])
+            .then(() => {
+                // insert mock data
+                return Q.all([
+                    db.collection('furnaceHistory').insert(mockData.mockFurnaceHistory),
+                    db.collection('indoorTemp').insert(mockData.mockIndoorTemp)
+                ])
+            })
+            .then(() => {
+                return restClient(req)
+            })
             .then((response) => {
                 console.log('response', response)
-                assert.equal(response.length, 2, 'history len should be 2')
+                assert.equal(response.length, 5, 'history length is wrong')
+                _.each(response, (r) => {
+                    assert.isDefined(r.indoorTempF, 'missing indoorTempF')
+                    assert.isDefined(r.running, 'missing running')
+                })
             })
             .then(() => {
                 done()
             })
+            .catch(catchError(done))
     })
 
     it('should allow retrieving furnace total runtime', (done) => {
@@ -129,11 +157,30 @@ describe('the furnace monitor', () => {
         restClient(req)
             .then((response) => {
                 console.log('response', response)
-                assert.equal(response.totalRunTimeMins,5,'total run time is wrong')
+                assert.equal(response.totalRunTimeMins, 15, 'total run time is wrong')
             })
             .then(() => {
                 done()
             })
+            .catch(catchError(done))
+    })
+
+    it('should allow posting an indoor temperature update', (done) => {
+        let req = {
+            method: 'POST',
+            uri: 'http://localhost:$port/furnace/api/updateIndoorTemp'.replace('$port', port),
+            json: true,
+            resolveWithFullResponse: true
+        }
+
+        restClient(req)
+            .then((response) => {
+                assert.equal(response.statusCode, 201, 'response code is wrongo!')
+            })
+            .then(() => {
+                done()
+            })
+            .catch(catchError(done))
     })
 })
 

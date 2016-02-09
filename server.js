@@ -10,22 +10,30 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const pmongo = require('promised-mongo')
 const moment = require('moment')
+const Q = require('Q')
 
 
 module.exports = (() => {
 
+    // this is the frequency in mins that we expect to take measurements for indoor temp, outdoor temp, and furnace
+    // this is needed to correlate the data
+    // i.e. if we have a furnace measurement at time X, we expect there to be a 'matching' indoor temp measurement
+    // that exists 'around' the same time, so between X - frequency / 2 and X + frequency / 2
+    const measurementFrequencyMins = 5
 
     const statusCollectionName = 'furnaceStatus'
     const historyCollectionName = 'furnaceHistory'
+    const indoorTempCollectionName = 'indoorTemp'
 
     const furnaceStatusURL = '/furnace/api/furnaceStatus'
     const furnaceHistoryURL = '/furnace/api/furnaceHistory'
     const furnaceUpdateStatusURL = '/furnace/api/updateStatus'
     const furnaceTotalRuntimeURL = '/furnace/api/totalRuntime'
+    const indoorTempUpdateURL = '/furnace/api/updateIndoorTemp'
     const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
-    let password, db, statusCollection, historyCollection, port
+    let password, db, statusCollection, historyCollection, indoorTempCollection, port
 
 
     let authFilter = (req, res, next) => {
@@ -37,7 +45,8 @@ module.exports = (() => {
             furnaceUpdateStatusURL,
             furnaceStatusURL,
             furnaceHistoryURL,
-            furnaceTotalRuntimeURL
+            furnaceTotalRuntimeURL,
+            indoorTempUpdateURL
         ]
 
         const allowedPatterns = [
@@ -105,12 +114,52 @@ module.exports = (() => {
         let q = {
             dateTime: {"$gte": new moment().subtract(previousHours, 'hours').toDate()}
         }
+
+        // here is where we'll have to merge furnace history with indoor temp
         historyCollection.find(q)
-            .then((qr) => {
-                res.json(qr)
+            .then((furnaceData) => {
+                console.log('got furnace data', furnaceData)
+                let promises = _.map(furnaceData, (furnaceRecord) => {
+
+                    return new Promise((resolveFunc, rejectFunc) => {
+
+                        let beforeTime = moment(furnaceRecord.dateTime).subtract(measurementFrequencyMins / 2, 'minutes')
+                        let afterTime = moment(furnaceRecord.dateTime).add(measurementFrequencyMins / 2, 'minutes')
+
+                        // find a matching indoor temp record
+                        let tempQ = {
+                            dateTime: {
+                                "$gte": beforeTime.toDate(),
+                                "$lt": afterTime.toDate()
+                            }
+
+                        }
+                        indoorTempCollection.findOne(tempQ)
+                            .then((matchingTempRecord) => {
+                                console.log('matching temp record', matchingTempRecord)
+                                if (matchingTempRecord) {
+                                    furnaceRecord.indoorTempF = matchingTempRecord.tempF
+                                } else {
+                                    console.log('no matching temp record found!')
+                                }
+                                resolveFunc(furnaceRecord)
+                            })
+                            .catch((err) => {
+                                rejectFunc(err)
+                                console.log('caught error looking up matching temp', err)
+                            })
+                    })
+
+                })
+                // NOTE : this could result in a LOT of parallel queries
+                return Q.all(promises)
+            })
+            .then((mergedResults) => {
+                console.log('SENDING RESPONSE', mergedResults)
+                res.json(mergedResults)
             })
             .catch((err) => {
-                console.log(err)
+                console.log('CAUGHT ERROR in furnace history', err)
                 res.sendStatus(500)
             })
     }
@@ -145,6 +194,21 @@ module.exports = (() => {
     }
 
 
+    let handleIndoorTempUpdate = (req, res, next) => {
+        // handle a post that updates temperature
+        console.log('temp post body', req.body)
+        let b = req.body
+        b.dateTime = moment(req.body.dateTime).toDate()
+        indoorTempCollection.insert(b)
+            .then((result) => {
+                res.sendStatus(201)
+            })
+            .catch((err) => {
+                console.log('error on post indoor temp', err)
+            })
+    }
+
+
     let init = (argv) => {
         console.log('argv', argv)
         // read a password file
@@ -160,6 +224,7 @@ module.exports = (() => {
         db = pmongo(dbConnectionString)
         statusCollection = db.collection(statusCollectionName)
         historyCollection = db.collection(historyCollectionName)
+        indoorTempCollection = db.collection(indoorTempCollectionName)
 
         let app = express()
         app.use(session({
@@ -181,6 +246,7 @@ module.exports = (() => {
         app.get(furnaceHistoryURL, handleFurnaceHistory)
         app.get(furnaceTotalRuntimeURL, handleFurnaceRuntime)
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
+        app.post(indoorTempUpdateURL, handleIndoorTempUpdate)
 
         console.log('listening on', port)
         return app.listen(port)
