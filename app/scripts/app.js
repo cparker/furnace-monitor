@@ -67,7 +67,7 @@ app.run(function ($httpBackend) {
             .respond(200, mockFurnaceHistory);
 
         $httpBackend.whenGET('/furnace/api/totalRuntime')
-            .respond(200, mockRuntime)
+            .respond(200, mockRuntime);
     }
 
     else {

@@ -39,7 +39,7 @@ angular.module('furnaceMonitorApp')
                 var chartPairs = _.map(history, function (rec) {
                     var jsDate = moment(rec.dateTime).toDate();
                     var runningValue = rec.running ? 1 : 0;
-                    return [jsDate, runningValue, rec.tempF];
+                    return [jsDate, runningValue, rec.indoorTempF || 65.0]; // placeholder to not screw up the graph if we're missing data
                 });
 
                 $scope.chartObject.data = chartData.concat(chartPairs);
@@ -54,7 +54,7 @@ angular.module('furnaceMonitorApp')
                 var dur = moment.duration(runtime.totalRunTimeMins, 'minutes');
                 $scope.totalRunTimeHours = dur.get('h');
                 $scope.totalRunTimeMins = dur.get('m');
-            })
+            });
 
 
         $scope.furnaceOne = {
@@ -121,7 +121,10 @@ angular.module('furnaceMonitorApp')
                 //1
                 {
                     ticks: [60,65,70,75],
-                    title: 'Indoor Temp ºF'
+                    title: 'Indoor Temp ºF',
+                    gridlines : {
+                        color: 'white'
+                    }
                 }
 
             ],
