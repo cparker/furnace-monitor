@@ -10,7 +10,7 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const pmongo = require('promised-mongo')
 const moment = require('moment')
-const Q = require('Q')
+const Q = require('q')
 
 
 module.exports = (() => {
