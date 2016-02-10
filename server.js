@@ -24,6 +24,7 @@ module.exports = (() => {
     const statusCollectionName = 'furnaceStatus'
     const historyCollectionName = 'furnaceHistory'
     const indoorTempCollectionName = 'indoorTemp'
+    const outdoorTempCollectionName = 'outdoorTemp'
 
     const furnaceStatusURL = '/furnace/api/furnaceStatus'
     const furnaceHistoryURL = '/furnace/api/furnaceHistory'
@@ -33,7 +34,7 @@ module.exports = (() => {
     const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
-    let password, db, statusCollection, historyCollection, indoorTempCollection, port
+    let password, db, statusCollection, historyCollection, indoorTempCollection, outdoorTempCollection, port
 
 
     let authFilter = (req, res, next) => {
@@ -140,9 +141,17 @@ module.exports = (() => {
                                 if (matchingTempRecord) {
                                     furnaceRecord.indoorTempF = matchingTempRecord.tempF
                                 } else {
-                                    console.log('no matching temp record found!')
+                                    console.log('no matching indoor temp record found!')
                                 }
-                                resolveFunc(furnaceRecord)
+                                return outdoorTempCollection.findOne(tempQ)
+                            })
+                            .then((outdoorMatchingRecord) => {
+                                if (outdoorMatchingRecord) {
+                                    furnaceRecord.outdoorTempF = outdoorMatchingRecord.tempF
+                                    resolveFunc(furnaceRecord)
+                                } else {
+                                    console.log('no matching outdoor temp record found!')
+                                }
                             })
                             .catch((err) => {
                                 rejectFunc(err)
@@ -225,6 +234,7 @@ module.exports = (() => {
         statusCollection = db.collection(statusCollectionName)
         historyCollection = db.collection(historyCollectionName)
         indoorTempCollection = db.collection(indoorTempCollectionName)
+        outdoorTempCollection = db.collection(outdoorTempCollectionName)
 
         let app = express()
         app.use(session({

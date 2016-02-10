@@ -51,6 +51,30 @@ module.exports = {
             "tempF": 69
         }
 
+    ],
+
+    "mockOutdoorTemp": [
+        {
+            "dateTime": now.subtract(3, 'minutes').toDate(),
+            "tempF": 55
+        },
+        {
+            "dateTime": now.subtract(8, 'minutes').toDate(),
+            "tempF": 56
+        },
+        {
+            "dateTime": now.subtract(13, 'minutes').toDate(),
+            "tempF": 57
+        },
+        {
+            "dateTime": now.subtract(18, 'minutes').toDate(),
+            "tempF": 58
+        },
+        {
+            "dateTime": now.subtract(23, 'minutes').toDate(),
+            "tempF": 59
+        }
+
     ]
 }
 

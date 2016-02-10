@@ -32,11 +32,9 @@ before((done) => {
     Q.all([
         db.collection('furnaceStatus').drop(),
         db.collection('furnaceHistory').drop(),
-        db.collection('indoorTemp').drop()
+        db.collection('indoorTemp').drop(),
+        db.collection('outdoorTemp').drop()
     ])
-        .then(() => {
-            return db.collection('furnaceHistory').drop()
-        })
         .then(() => {
             done()
         })
@@ -127,7 +125,8 @@ describe('the furnace monitor', () => {
                 // insert mock data
                 return Q.all([
                     db.collection('furnaceHistory').insert(mockData.mockFurnaceHistory),
-                    db.collection('indoorTemp').insert(mockData.mockIndoorTemp)
+                    db.collection('indoorTemp').insert(mockData.mockIndoorTemp),
+                    db.collection('outdoorTemp').insert(mockData.mockOutdoorTemp)
                 ])
             })
             .then(() => {
@@ -137,6 +136,7 @@ describe('the furnace monitor', () => {
                 console.log('response', response)
                 assert.equal(response.length, 5, 'history length is wrong')
                 _.each(response, (r) => {
+                    assert.isDefined(r.outdoorTempF, 'missing outdoorTempF')
                     assert.isDefined(r.indoorTempF, 'missing indoorTempF')
                     assert.isDefined(r.running, 'missing running')
                 })
