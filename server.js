@@ -148,10 +148,10 @@ module.exports = (() => {
                             .then((outdoorMatchingRecord) => {
                                 if (outdoorMatchingRecord) {
                                     furnaceRecord.outdoorTempF = outdoorMatchingRecord.tempF
-                                    resolveFunc(furnaceRecord)
                                 } else {
                                     console.log('no matching outdoor temp record found!')
                                 }
+                                resolveFunc(furnaceRecord)
                             })
                             .catch((err) => {
                                 rejectFunc(err)
