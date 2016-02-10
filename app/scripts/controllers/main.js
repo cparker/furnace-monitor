@@ -43,7 +43,7 @@ angular.module('furnaceMonitorApp')
                         jsDate,
                         runningValue,
                         rec.indoorTempF || 65.0,
-                        rec.outdoorTempF || 60.0
+                        rec.outdoorTempF || 50.0
                     ]; // placeholder to not screw up the graph if we're missing data
                 });
 
