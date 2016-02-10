@@ -131,16 +131,20 @@ angular.module('furnaceMonitorApp')
 
                 //1
                 {
-                    ticks: [60,65,70,75],
                     title: 'Temp ºF',
                     gridlines : {
                         color: 'white'
-                    }
+                    },
+                    minValue:10,
+                    maxValue:80,
+                    ticks: [10,20,30,40,50,60,70,80]
                 },
 
                 //1
                 {
-                    ticks: []
+                    ticks: [],
+                    minValue:10,
+                    maxValue:80
                 }
 
             ],
