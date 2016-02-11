@@ -124,8 +124,8 @@ module.exports = (() => {
 
                     return new Promise((resolveFunc, rejectFunc) => {
 
-                        let beforeTime = moment(furnaceRecord.dateTime).subtract(measurementFrequencyMins / 2, 'minutes')
-                        let afterTime = moment(furnaceRecord.dateTime).add(measurementFrequencyMins / 2, 'minutes')
+                        let beforeTime = moment(furnaceRecord.dateTime).subtract(Math.ceil(measurementFrequencyMins / 2) + 1, 'minutes')
+                        let afterTime = moment(furnaceRecord.dateTime).add(Math.ceil(measurementFrequencyMins / 2) + 1, 'minutes')
 
                         // find a matching indoor temp record
                         let tempQ = {
