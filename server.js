@@ -141,7 +141,7 @@ module.exports = (() => {
                                 if (matchingTempRecord) {
                                     furnaceRecord.indoorTempF = matchingTempRecord.tempF
                                 } else {
-                                    console.log('no matching indoor temp record found!')
+                                    console.log('no matching indoor temp record found for',furnaceRecord,'query',tempQ)
                                 }
                                 return outdoorTempCollection.findOne(tempQ)
                             })
@@ -149,7 +149,7 @@ module.exports = (() => {
                                 if (outdoorMatchingRecord) {
                                     furnaceRecord.outdoorTempF = outdoorMatchingRecord.tempF
                                 } else {
-                                    console.log('no matching outdoor temp record found!')
+                                    console.log('no matching outdoor temp record found for',furnaceRecord,'query',tempQ)
                                 }
                                 resolveFunc(furnaceRecord)
                             })
