@@ -141,15 +141,22 @@ module.exports = (() => {
                                 if (matchingTempRecord) {
                                     furnaceRecord.indoorTempF = matchingTempRecord.tempF
                                 } else {
-                                    console.log('no matching indoor temp record found for',furnaceRecord,'query',tempQ)
+                                    console.log('no matching indoor temp record found for', furnaceRecord, 'query', tempQ)
                                 }
-                                return outdoorTempCollection.findOne(tempQ)
+
+                                // just look for an outdoor temp reading that is less that the current time
+                                let outdoorTempQ = {
+                                    dateTime: {
+                                        "$lte": furnaceRecord.dateTime
+                                    }
+                                }
+                                return outdoorTempCollection.find(outdoorTempQ).sort({dateTime: -1})
                             })
-                            .then((outdoorMatchingRecord) => {
-                                if (outdoorMatchingRecord) {
-                                    furnaceRecord.outdoorTempF = outdoorMatchingRecord.tempF
+                            .then((outdoorMatchingRecords) => {
+                                if (outdoorMatchingRecords[0]) {
+                                    furnaceRecord.outdoorTempF = outdoorMatchingRecords[0].tempF
                                 } else {
-                                    console.log('no matching outdoor temp record found for',furnaceRecord,'query',tempQ)
+                                    console.log('no matching outdoor temp record found for', furnaceRecord, 'query', tempQ)
                                 }
                                 resolveFunc(furnaceRecord)
                             })
