@@ -25,16 +25,18 @@ module.exports = (() => {
     const historyCollectionName = 'furnaceHistory'
     const indoorTempCollectionName = 'indoorTemp'
     const outdoorTempCollectionName = 'outdoorTemp'
+    const upstairsTempCollectionName = 'upstairsTempAndLight'
 
     const furnaceStatusURL = '/furnace/api/furnaceStatus'
     const furnaceHistoryURL = '/furnace/api/furnaceHistory'
     const furnaceUpdateStatusURL = '/furnace/api/updateStatus'
     const furnaceTotalRuntimeURL = '/furnace/api/totalRuntime'
     const indoorTempUpdateURL = '/furnace/api/updateIndoorTemp'
+    const upstairsTempAndLightURL = '/furnace/api/updateUpstairsTempAndLight'
     const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
-    let password, db, statusCollection, historyCollection, indoorTempCollection, outdoorTempCollection, port
+    let password, db, statusCollection, historyCollection, indoorTempCollection, outdoorTempCollection, port, upstairsTempCollection
 
 
     let authFilter = (req, res, next) => {
@@ -47,7 +49,8 @@ module.exports = (() => {
             furnaceStatusURL,
             furnaceHistoryURL,
             furnaceTotalRuntimeURL,
-            indoorTempUpdateURL
+            indoorTempUpdateURL,
+            upstairsTempAndLightURL
         ]
 
         const allowedPatterns = [
@@ -225,6 +228,21 @@ module.exports = (() => {
     }
 
 
+    let handleUpstairsTempAndLightUpdate = (req, res, next) => {
+        console.log('post body', req.body)
+        let b = req.body
+        b.dateTime = moment().toDate()
+        upstairsTempCollection.insert(b)
+            .then((result) => {
+                res.sendStatus(201)
+            })
+            .catch((err) => {
+                console.log('error on post upstairs temp', err)
+            })
+
+    }
+
+
     let init = (argv) => {
         console.log('argv', argv)
         // read a password file
@@ -242,6 +260,7 @@ module.exports = (() => {
         historyCollection = db.collection(historyCollectionName)
         indoorTempCollection = db.collection(indoorTempCollectionName)
         outdoorTempCollection = db.collection(outdoorTempCollectionName)
+        upstairsTempCollection = db.collection(upstairsTempCollectionName)
 
         let app = express()
         app.use(session({
@@ -264,6 +283,7 @@ module.exports = (() => {
         app.get(furnaceTotalRuntimeURL, handleFurnaceRuntime)
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
         app.post(indoorTempUpdateURL, handleIndoorTempUpdate)
+        app.post(upstairsTempAndLightURL, handleUpstairsTempAndLightUpdate)
 
         console.log('listening on', port)
         return app.listen(port)
