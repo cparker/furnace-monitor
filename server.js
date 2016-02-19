@@ -153,7 +153,7 @@ module.exports = (() => {
                                         "$lte": furnaceRecord.dateTime
                                     }
                                 }
-                                return outdoorTempCollection.find(outdoorTempQ).sort({dateTime: -1})
+                                return outdoorTempCollection.find(outdoorTempQ).sort({dateTime: -1}).limit(1)
                             })
                             .then((outdoorMatchingRecords) => {
                                 if (outdoorMatchingRecords[0]) {
