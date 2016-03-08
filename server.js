@@ -243,6 +243,17 @@ module.exports = (() => {
     }
 
 
+    let handleUpstairsTempAndLightGrt = (req, res, next) => {
+      upstairsTempCollection.find()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => {
+            console.log('error',err);
+        })
+    }
+
+
     let init = (argv) => {
         console.log('argv', argv)
         // read a password file
@@ -284,6 +295,7 @@ module.exports = (() => {
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
         app.post(indoorTempUpdateURL, handleIndoorTempUpdate)
         app.post(upstairsTempAndLightURL, handleUpstairsTempAndLightUpdate)
+        app.get(upstairsTempAndLightURL, handlgUpstairsTempAndLightGet)
 
         console.log('listening on', port)
         return app.listen(port)
