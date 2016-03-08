@@ -243,7 +243,7 @@ module.exports = (() => {
     }
 
 
-    let handleUpstairsTempAndLightGrt = (req, res, next) => {
+    let handleUpstairsTempAndLightGet = (req, res, next) => {
       upstairsTempCollection.find()
         .then((data) => {
             res.send(data);
@@ -295,7 +295,7 @@ module.exports = (() => {
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
         app.post(indoorTempUpdateURL, handleIndoorTempUpdate)
         app.post(upstairsTempAndLightURL, handleUpstairsTempAndLightUpdate)
-        app.get(upstairsTempAndLightURL, handlgUpstairsTempAndLightGet)
+        app.get(upstairsTempAndLightURL, handleUpstairsTempAndLightGet)
 
         console.log('listening on', port)
         return app.listen(port)
