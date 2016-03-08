@@ -33,6 +33,7 @@ module.exports = (() => {
     const furnaceTotalRuntimeURL = '/furnace/api/totalRuntime'
     const indoorTempUpdateURL = '/furnace/api/updateIndoorTemp'
     const upstairsTempAndLightURL = '/furnace/api/updateUpstairsTempAndLight'
+    const getUpstairsTempAndLight = '/furnace/api/tempAndLight'
     const defaultPort = 4000
 
     let dbConnectionString = 'mongodb://localhost/furnace'
@@ -50,7 +51,8 @@ module.exports = (() => {
             furnaceHistoryURL,
             furnaceTotalRuntimeURL,
             indoorTempUpdateURL,
-            upstairsTempAndLightURL
+            upstairsTempAndLightURL,
+            getUpstairsTempAndLight
         ]
 
         const allowedPatterns = [
@@ -295,7 +297,7 @@ module.exports = (() => {
         app.post(furnaceUpdateStatusURL, handleFurnaceUpdate)
         app.post(indoorTempUpdateURL, handleIndoorTempUpdate)
         app.post(upstairsTempAndLightURL, handleUpstairsTempAndLightUpdate)
-        app.get(upstairsTempAndLightURL, handleUpstairsTempAndLightGet)
+        app.get(getUpstairsTempAndLight, handleUpstairsTempAndLightGet)
 
         console.log('listening on', port)
         return app.listen(port)
